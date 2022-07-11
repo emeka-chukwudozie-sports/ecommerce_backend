@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpResponseDto registerUser(SignUpDto signUpDto) throws CustomException {
 
-        if(userRepository.findByEmail(signUpDto.getEmail()).isEmpty()){
-            throw new CustomException("User with Email ALready Exists");
+        if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
+            throw new CustomException("User with Email Already Exists");
         }
         String encryptedPassword = signUpDto.getPassword();
         try{
