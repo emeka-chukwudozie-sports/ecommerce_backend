@@ -35,6 +35,9 @@ public class AuthToken {
 //    @JsonProperty("yy:MM:DD")
     private LocalDate expiryDate;
 
+    @Column(name = "is_valid")
+    private boolean isValid;
+
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
@@ -44,5 +47,6 @@ public class AuthToken {
         this.createdDate = LocalDate.now();
         this.token = UUID.randomUUID().toString();
         this.expiryDate = this.createdDate.plusDays(1);
+        this.isValid = false;
     }
 }

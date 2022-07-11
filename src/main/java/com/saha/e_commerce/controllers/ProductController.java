@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
+@CrossOrigin("*")
 public class ProductController {
 
     private final ProductService productService;
@@ -44,6 +45,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
+    @PostMapping
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Integer productId,
                                                      @Valid @RequestBody ProductDto productDto){
         Optional<Category> optionalCategory  = categoryService.readCategoryById(productDto.getCategoryId());

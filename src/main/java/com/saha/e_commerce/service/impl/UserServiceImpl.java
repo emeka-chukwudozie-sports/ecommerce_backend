@@ -1,13 +1,17 @@
 package com.saha.e_commerce.service.impl;
 
+import com.saha.e_commerce.dto.user.LoginDto;
+import com.saha.e_commerce.dto.user.LoginResponseDto;
 import com.saha.e_commerce.dto.user.SignUpDto;
 import com.saha.e_commerce.dto.user.SignUpResponseDto;
+import com.saha.e_commerce.exception.AuthenticationException;
 import com.saha.e_commerce.exception.CustomException;
 import com.saha.e_commerce.model.AuthToken;
 import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.repositories.UserRepository;
 import com.saha.e_commerce.service.AuthTokenService;
 import com.saha.e_commerce.service.UserService;
+import com.saha.e_commerce.utils.MessageString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -32,7 +36,7 @@ public class UserServiceImpl implements UserService {
     public SignUpResponseDto registerUser(SignUpDto signUpDto) throws CustomException {
 
         if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
-            throw new CustomException("User with Email Already Exists");
+            throw new CustomException(MessageString.EMAIL_EXISTS);
         }
         String encryptedPassword = signUpDto.getPassword();
         try{
@@ -51,6 +55,26 @@ public class UserServiceImpl implements UserService {
         } catch (Exception exception){
             throw new CustomException(exception.getMessage());
         }
+    }
+
+    @Override
+    public LoginResponseDto loginUser(LoginDto loginDto) throws CustomException, AuthenticationException {
+        User user = userRepository.findByEmail(loginDto.getEmail()).
+       orElseThrow(() -> new CustomException(MessageString.NO_USER_WITH_EMAIL));
+        try {
+            if (!user.getPassword().equals(hashPassword(loginDto.getPassword()))){
+                throw new AuthenticationException(MessageString.WRONG_PASSWORD);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Error hashing password: {}",e.getMessage());
+            e.printStackTrace();
+            throw new CustomException(e.getMessage());
+        }
+        AuthToken userToken = tokenService.getTokenForUser(user)
+                .orElseThrow(() -> new AuthenticationException(MessageString.TOKEN_NOT_PRESENT));
+        tokenService.authenticate(userToken.getToken());
+       return (userToken.isValid())?(new LoginResponseDto(userToken.getToken(), "SUCCESS")):
+               (new LoginResponseDto("Token authentication error", "FAILURE"));
     }
 
     private String hashPassword(String password) throws NoSuchAlgorithmException {

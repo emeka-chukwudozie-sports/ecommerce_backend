@@ -4,6 +4,7 @@ import com.saha.e_commerce.exception.AuthenticationException;
 import com.saha.e_commerce.model.AuthToken;
 import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.repositories.AuthTokenRepository;
+import com.saha.e_commerce.repositories.UserRepository;
 import com.saha.e_commerce.service.AuthTokenService;
 import com.saha.e_commerce.utils.MessageString;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class AuthTokenServiceImpl implements AuthTokenService {
 
     private final AuthTokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
-    public AuthTokenServiceImpl(AuthTokenRepository tokenRepository) {
+    public AuthTokenServiceImpl(AuthTokenRepository tokenRepository, UserRepository userRepository) {
         this.tokenRepository = tokenRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,6 +45,7 @@ public class AuthTokenServiceImpl implements AuthTokenService {
 
     @Override
     public void authenticate(String token) throws AuthenticationException {
+       var authToken =  tokenRepository.findAuthTokenByToken(token);
         if(tokenRepository.findAuthTokenByToken(token).isEmpty() || Objects.isNull(token)){
             throw new AuthenticationException(MessageString.TOKEN_NOT_PRESENT);
         }
@@ -49,9 +53,12 @@ public class AuthTokenServiceImpl implements AuthTokenService {
             throw new AuthenticationException(MessageString.INVALID_TOKEN+" : "+MessageString.NO_USER_FOR_TOKEN);
         }
 
-        if(tokenRepository.findAuthTokenByToken(token).get().getExpiryDate().isAfter(LocalDate.now())){
+        if(tokenRepository.findAuthTokenByToken(token).get().getExpiryDate().isBefore(LocalDate.now())){
             throw new AuthenticationException(MessageString.TOKEN_EXPIRED);
         }
+
+        authToken.get().setValid(true);
+        tokenRepository.save(authToken.get());
 
     }
 }
