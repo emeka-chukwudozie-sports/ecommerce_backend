@@ -1,11 +1,13 @@
 package com.saha.e_commerce.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
@@ -26,10 +28,12 @@ public class AuthToken {
     private String token;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate;
+//    @JsonProperty("yy:MM:DD")
+    private LocalDate createdDate;
 
     @Column(name = "expiry_date")
-    private LocalDateTime expiryDate;
+//    @JsonProperty("yy:MM:DD")
+    private LocalDate expiryDate;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
@@ -37,8 +41,8 @@ public class AuthToken {
 
     public AuthToken(User user){
         this.user = user;
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = LocalDate.now();
         this.token = UUID.randomUUID().toString();
-        this.expiryDate = this.createdDate.plusMinutes(10);
+        this.expiryDate = this.createdDate.plusDays(1);
     }
 }

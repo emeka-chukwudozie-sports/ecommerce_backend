@@ -3,8 +3,10 @@ package com.saha.e_commerce.service.impl;
 import com.saha.e_commerce.dto.user.SignUpDto;
 import com.saha.e_commerce.dto.user.SignUpResponseDto;
 import com.saha.e_commerce.exception.CustomException;
+import com.saha.e_commerce.model.AuthToken;
 import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.repositories.UserRepository;
+import com.saha.e_commerce.service.AuthTokenService;
 import com.saha.e_commerce.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +21,11 @@ public class UserServiceImpl implements UserService {
 
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
+    private final AuthTokenService tokenService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, AuthTokenService tokenService) {
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -40,7 +44,9 @@ public class UserServiceImpl implements UserService {
         User newUser = new User(signUpDto.getFirstName(),signUpDto.getLastName(),
                 signUpDto.getEmail(),encryptedPassword);
         try {
+            final AuthToken token = new AuthToken(newUser);
             userRepository.save(newUser);
+            tokenService.saveConfirmationToken(token);
             return new SignUpResponseDto("SUCCESS", "User Successfully signed Up");
         } catch (Exception exception){
             throw new CustomException(exception.getMessage());

@@ -3,6 +3,7 @@ package com.saha.e_commerce.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ import javax.persistence.GenerationType;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class User {
 
     @Id
