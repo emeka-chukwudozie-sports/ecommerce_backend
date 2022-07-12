@@ -1,5 +1,6 @@
 package com.saha.e_commerce.repositories;
 
+import com.saha.e_commerce.model.Product;
 import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.model.WishList;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,5 @@ import java.util.List;
 @Repository
 public interface WishListRepository extends JpaRepository<WishList, Integer> {
     List<WishList> findAllByUserOrderByCreatedDateDesc(User user);
+    List<WishList> findAllByUserAndProduct(User user, Product product);
 }

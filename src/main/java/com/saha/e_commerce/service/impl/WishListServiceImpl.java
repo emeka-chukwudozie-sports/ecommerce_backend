@@ -39,7 +39,12 @@ public class WishListServiceImpl implements WishListService {
         Product product = productRepository.findById(productDto.getProductId())
                 .orElseThrow(() -> new CustomException(INVALID_PRODUCT));
         WishList wishList = new WishList(user,product);
-        wishListRepository.save(wishList);
+        List<WishList> wishListsForProduct = wishListRepository.findAllByUserAndProduct(user,product);
+        if(wishListsForProduct.isEmpty()){
+            wishListRepository.save(wishList);
+        }else {
+            throw new CustomException("Product already added to wish List");
+        }
     }
 
     @Override

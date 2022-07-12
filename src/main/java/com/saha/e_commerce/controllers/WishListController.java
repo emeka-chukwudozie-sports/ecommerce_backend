@@ -31,7 +31,6 @@ public class WishListController {
         wishListService.createWishList(productDto,token);
         return new ResponseEntity<>(new ApiResponse(true,"Added to wishlist"), HttpStatus.OK);
     }
-
     @GetMapping("/{token}")
     public ResponseEntity<List<ProductDto>> getWishList(@PathVariable("token") String token) throws AuthenticationException {
         return new ResponseEntity<>(wishListService.readAllWishList(token), HttpStatus.OK);
