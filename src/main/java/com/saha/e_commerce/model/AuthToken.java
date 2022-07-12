@@ -1,15 +1,11 @@
 package com.saha.e_commerce.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -28,11 +24,9 @@ public class AuthToken {
     private String token;
 
     @Column(name = "created_date")
-//    @JsonProperty("yy:MM:DD")
     private LocalDate createdDate;
 
     @Column(name = "expiry_date")
-//    @JsonProperty("yy:MM:DD")
     private LocalDate expiryDate;
 
     @Column(name = "is_valid")
