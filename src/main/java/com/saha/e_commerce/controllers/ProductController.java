@@ -5,6 +5,7 @@ import com.saha.e_commerce.model.Category;
 import com.saha.e_commerce.payload.ApiResponse;
 import com.saha.e_commerce.service.CategoryService;
 import com.saha.e_commerce.service.ProductService;
+import static com.saha.e_commerce.utils.MessageString.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +31,14 @@ public class ProductController {
     public ResponseEntity<ApiResponse> addProduct (@Valid @RequestBody ProductDto productDto){
         Optional<Category> optionalCategory = categoryService.readCategoryById(productDto.getCategoryId());
         if (optionalCategory.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(false,"Category is Invalid"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApiResponse(false,INVALID_CATEGORY), HttpStatus.CONFLICT);
         }
         Category category = optionalCategory.get();
         if (productService.productExistByName(productDto.getProductName())){
-            return new ResponseEntity<>(new ApiResponse(false,"Product already created"),HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApiResponse(false,PRODUCT_EXISTS),HttpStatus.CONFLICT);
         }
         productService.createProduct(productDto, category);
-        return new ResponseEntity<>(new ApiResponse(true, "Product successfully added"), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(true, PRODUCT_CREATED), HttpStatus.CREATED);
     }
 
     @GetMapping("/")
@@ -45,18 +46,18 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/{productId}")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Integer productId,
                                                      @Valid @RequestBody ProductDto productDto){
         Optional<Category> optionalCategory  = categoryService.readCategoryById(productDto.getCategoryId());
         if(optionalCategory.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(false,"Category does not exist"),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApiResponse(false,INVALID_CATEGORY),HttpStatus.NOT_FOUND);
         }
         Category category = optionalCategory.get();
         if (productService.getProductById(productDto.getProductId()) == null){
-            return new ResponseEntity<>(new ApiResponse(false, "Product does not exist"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApiResponse(false,INVALID_PRODUCT), HttpStatus.NOT_FOUND);
         }
         productService.updateProduct(productId, productDto);
-        return new ResponseEntity<>(new ApiResponse(true, "Product successfully updated"), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(true,PRODUCT_UPDATED), HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.saha.e_commerce.controllers;
 import com.saha.e_commerce.model.Category;
 import com.saha.e_commerce.payload.ApiResponse;
 import com.saha.e_commerce.service.CategoryService;
+import static com.saha.e_commerce.utils.MessageString.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,10 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody Category category){
         if(Objects.nonNull(categoryService.readCategory(category.getCategoryName()))){
             return new ResponseEntity<>(
-                    new ApiResponse(false, "Category Already Exists"), HttpStatus.CONFLICT);
+                    new ApiResponse(false,CATEGORY_EXISTS), HttpStatus.CONFLICT);
         } categoryService.createCategory(category);
         return new ResponseEntity<>(
-                new ApiResponse(true, "Category created successfully"),HttpStatus.CREATED);
+                new ApiResponse(true, CATEGORY_CREATED),HttpStatus.CREATED);
     }
 
     /**
@@ -53,7 +54,7 @@ public class CategoryController {
             return new ResponseEntity<>(new ApiResponse(true,
                     category.getCategoryName()+" : "+category.getDescription()),HttpStatus.OK);
         }
-        return new ResponseEntity<>(new ApiResponse(false,"Category doesn't exist"),HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ApiResponse(false,INVALID_CATEGORY),HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -65,8 +66,8 @@ public class CategoryController {
                                                       @Valid @RequestBody Category category){
         if(Objects.nonNull(categoryService.readCategoryById(categoryId))){
             categoryService.updateCategory(categoryId,category);
-            return new ResponseEntity<>(new ApiResponse(true,"Category Updated"),HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse(true,CATEGORY_UPDATED),HttpStatus.OK);
         }
-        return new ResponseEntity<>(new ApiResponse(false,"Category does not exist"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ApiResponse(false,INVALID_CATEGORY), HttpStatus.NOT_FOUND);
     }
 }

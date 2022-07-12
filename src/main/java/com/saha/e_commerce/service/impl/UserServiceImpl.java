@@ -11,7 +11,7 @@ import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.repositories.UserRepository;
 import com.saha.e_commerce.service.AuthTokenService;
 import com.saha.e_commerce.service.UserService;
-import com.saha.e_commerce.utils.MessageString;
+import static com.saha.e_commerce.utils.MessageString.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -23,7 +23,7 @@ import java.security.NoSuchAlgorithmException;
 @Repository
 public class UserServiceImpl implements UserService {
 
-    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
     private final AuthTokenService tokenService;
 
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     public SignUpResponseDto registerUser(SignUpDto signUpDto) throws CustomException {
 
         if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
-            throw new CustomException(MessageString.EMAIL_EXISTS);
+            throw new CustomException(EMAIL_EXISTS);
         }
         String encryptedPassword = signUpDto.getPassword();
         try{
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
             final AuthToken token = new AuthToken(newUser);
             userRepository.save(newUser);
             tokenService.saveConfirmationToken(token);
-            return new SignUpResponseDto("SUCCESS", "User Successfully signed Up");
+            return new SignUpResponseDto("SUCCESS", USER_SIGNED_UP);
         } catch (Exception exception){
             throw new CustomException(exception.getMessage());
         }
@@ -60,10 +60,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponseDto loginUser(LoginDto loginDto) throws CustomException, AuthenticationException {
         User user = userRepository.findByEmail(loginDto.getEmail()).
-       orElseThrow(() -> new CustomException(MessageString.NO_USER_WITH_EMAIL));
+       orElseThrow(() -> new CustomException(NO_USER_WITH_EMAIL));
         try {
             if (!user.getPassword().equals(hashPassword(loginDto.getPassword()))){
-                throw new AuthenticationException(MessageString.WRONG_PASSWORD);
+                throw new AuthenticationException(WRONG_PASSWORD);
             }
         } catch (NoSuchAlgorithmException e) {
             logger.error("Error hashing password: {}",e.getMessage());
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(e.getMessage());
         }
         AuthToken userToken = tokenService.getTokenForUser(user)
-                .orElseThrow(() -> new AuthenticationException(MessageString.TOKEN_NOT_PRESENT));
+                .orElseThrow(() -> new AuthenticationException(TOKEN_NOT_PRESENT));
         tokenService.authenticate(userToken.getToken());
        return (userToken.isValid())?(new LoginResponseDto(userToken.getToken(), "SUCCESS")):
                (new LoginResponseDto("Token authentication error", "FAILURE"));
