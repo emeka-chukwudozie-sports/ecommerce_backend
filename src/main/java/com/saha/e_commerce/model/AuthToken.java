@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -24,10 +25,10 @@ public class AuthToken {
     private String token;
 
     @Column(name = "created_date")
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "expiry_date")
-    private LocalDate expiryDate;
+    private LocalDateTime expiryDate;
 
     @Column(name = "is_valid")
     private boolean isValid;
@@ -38,9 +39,9 @@ public class AuthToken {
 
     public AuthToken(User user){
         this.user = user;
-        this.createdDate = LocalDate.now();
+        this.createdDate = LocalDateTime.now();
         this.token = UUID.randomUUID().toString();
-        this.expiryDate = this.createdDate.plusDays(1);
+        this.expiryDate = this.createdDate.plusMinutes(15);
         this.isValid = false;
     }
 }

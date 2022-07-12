@@ -1,6 +1,7 @@
 package com.saha.e_commerce.controllers;
 
 import com.saha.e_commerce.dto.ProductDto;
+import com.saha.e_commerce.exception.ProductException;
 import com.saha.e_commerce.model.Category;
 import com.saha.e_commerce.payload.ApiResponse;
 import com.saha.e_commerce.service.CategoryService;
@@ -48,7 +49,7 @@ public class ProductController {
 
     @PostMapping("/{productId}")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("productId") Integer productId,
-                                                     @Valid @RequestBody ProductDto productDto){
+                                                     @Valid @RequestBody ProductDto productDto) throws ProductException {
         Optional<Category> optionalCategory  = categoryService.readCategoryById(productDto.getCategoryId());
         if(optionalCategory.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(false,INVALID_CATEGORY),HttpStatus.NOT_FOUND);

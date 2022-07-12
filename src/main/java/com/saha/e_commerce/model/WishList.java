@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -23,7 +24,7 @@ public class WishList {
     private User user;
 
     @Column(name = "created_date")
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @ManyToOne()
     @JoinColumn(name = "product_id")
@@ -32,6 +33,6 @@ public class WishList {
     public WishList(User user, Product product) {
         this.user = user;
         this.product = product;
-        this.createdDate = LocalDate.now();
+        this.createdDate = LocalDateTime.now();
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 @Repository
 public class UserServiceImpl implements UserService {
@@ -72,9 +73,15 @@ public class UserServiceImpl implements UserService {
         }
         AuthToken userToken = tokenService.getTokenForUser(user)
                 .orElseThrow(() -> new AuthenticationException(TOKEN_NOT_PRESENT));
+        if(tokenService.tokenExpired(userToken.getToken())){
+            //todo: extend the expiry time
+            System.out.println("Token expired");
+            userToken.setExpiryDate(LocalDateTime.now().plusMinutes(15));
+            tokenService.saveConfirmationToken(userToken);
+        }
         tokenService.authenticate(userToken.getToken());
        return (userToken.isValid())?(new LoginResponseDto(userToken.getToken(), "SUCCESS")):
-               (new LoginResponseDto("Token authentication error", "FAILURE"));
+               (new LoginResponseDto("Token Expired: Authentication Error", "FAILURE"));
     }
 
     private String hashPassword(String password) throws NoSuchAlgorithmException {

@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="cart")
@@ -20,7 +21,7 @@ public class Cart {
     private Integer id;
 
     @Column(name = "created_date")
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -36,7 +37,7 @@ public class Cart {
         this.product = product;
         this.quantity = quantity;
         this.user = user;
-        this.createdDate = LocalDate.now();
+        this.createdDate = LocalDateTime.now();
     }
 
 }

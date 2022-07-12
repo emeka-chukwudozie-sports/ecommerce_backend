@@ -14,4 +14,6 @@ public interface AuthTokenService {
     User getUserForToken(String token) throws AuthenticationException;
 
     void authenticate(String token) throws AuthenticationException;
+
+    boolean tokenExpired(String token);
 }

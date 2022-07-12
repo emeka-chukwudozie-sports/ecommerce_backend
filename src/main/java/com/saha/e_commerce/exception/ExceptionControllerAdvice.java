@@ -16,6 +16,11 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(value = AuthenticationException.class)
     public final ResponseEntity<String> handleAuthenticationException(AuthenticationException exception){
-        return new ResponseEntity<>(exception.getMessage(),HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = ProductException.class)
+    public final ResponseEntity<String> handleProductException(ProductException exception){
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.NOT_FOUND);
     }
 }

@@ -6,7 +6,6 @@ public class MessageString {
     public static final String INVALID_TOKEN = "Authentication token is not valid";
     public static final String NO_USER_FOR_TOKEN = "No user exists for generated token";
     public static final String USER_SIGNED_UP = "User sign up successful";
-    public static final String USER_LOGGED_IN = "User log in successful";
     public static final String TOKEN_EXPIRED = "Kindly generate another token, your token has expired";
     public static final String EMAIL_EXISTS = "User with Email Already Exists";
     public static final String NO_USER_WITH_EMAIL = "No user with Email exists";

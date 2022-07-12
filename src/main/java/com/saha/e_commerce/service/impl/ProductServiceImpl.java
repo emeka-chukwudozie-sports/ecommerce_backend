@@ -1,11 +1,13 @@
 package com.saha.e_commerce.service.impl;
 
 import com.saha.e_commerce.dto.ProductDto;
+import com.saha.e_commerce.exception.ProductException;
 import com.saha.e_commerce.model.Category;
 import com.saha.e_commerce.model.Product;
 import com.saha.e_commerce.repositories.CategoryRepository;
 import com.saha.e_commerce.repositories.ProductRepository;
 import com.saha.e_commerce.service.ProductService;
+import com.saha.e_commerce.utils.MessageString;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,12 +37,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductById(Integer productId) {
-        Product product = new Product();
-        if (productRepository.existsById(productId)){
-            product =  productRepository.getById(productId);
+    public Product getProductById(Integer productId) throws ProductException {
+        if (!productRepository.existsById(productId)){
+            throw new ProductException(MessageString.INVALID_PRODUCT);
         }
-        return product;
+        return productRepository.getById(productId);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(Integer productId, ProductDto productDto) {
+    public void updateProduct(Integer productId, ProductDto productDto) throws ProductException {
         Product existingProduct = this.getProductById(productId);
         Category category = categoryRepository.getById(productDto.getCategoryId());
         existingProduct.setProductName(productDto.getProductName());
