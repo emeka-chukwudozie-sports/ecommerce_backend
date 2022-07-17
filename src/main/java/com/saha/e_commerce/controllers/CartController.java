@@ -1,6 +1,7 @@
 package com.saha.e_commerce.controllers;
 
-import com.saha.e_commerce.dto.AddToCartDto;
+import com.saha.e_commerce.dto.cart.AddToCartDto;
+import com.saha.e_commerce.dto.cart.CartDto;
 import com.saha.e_commerce.exception.AuthenticationException;
 import com.saha.e_commerce.exception.ProductException;
 import com.saha.e_commerce.model.User;
@@ -32,6 +33,15 @@ public class CartController {
         User user = authTokenService.getUserForToken(token);
         cartService.addProductToCart(cartDto, user);
         return new ResponseEntity<>(new ApiResponse(true,"Product Added To Cart"), HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<CartDto> getCartItems(@RequestParam("token")String token)
+            throws AuthenticationException {
+        authTokenService.authenticate(token);
+        User user = authTokenService.getUserForToken(token);
+       CartDto cartDto =  cartService.listCartItems(user);
+       return new ResponseEntity<>(cartDto,HttpStatus.OK);
 
     }
 }

@@ -1,6 +1,8 @@
 package com.saha.e_commerce.service.impl;
 
-import com.saha.e_commerce.dto.AddToCartDto;
+import com.saha.e_commerce.dto.cart.AddToCartDto;
+import com.saha.e_commerce.dto.cart.CartDto;
+import com.saha.e_commerce.dto.cart.CartItemDto;
 import com.saha.e_commerce.exception.ProductException;
 import com.saha.e_commerce.model.Cart;
 import com.saha.e_commerce.model.Product;
@@ -10,6 +12,7 @@ import com.saha.e_commerce.service.CartService;
 import com.saha.e_commerce.service.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,6 +39,17 @@ public class CartServiceImpl implements CartService {
         Cart cart = new Cart(product,cartDto.getQuantity(),user);
         cartRepository.save(cart);
 
+    }
+
+    @Override
+    public CartDto listCartItems(User user) {
+        List<Cart> userCart = cartRepository.findAllByUserOrderByCreatedDateDesc(user);
+        List<CartItemDto> cartItems = new ArrayList<>();
+        for(Cart cart: userCart){
+            CartItemDto cartItemDto = new CartItemDto(cart);
+            cartItems.add(cartItemDto);
+        }
+        return null;
     }
 
     private boolean productAlreadyInCart(Product product, User user){
