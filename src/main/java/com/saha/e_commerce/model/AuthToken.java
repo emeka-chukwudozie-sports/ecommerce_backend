@@ -41,7 +41,7 @@ public class AuthToken {
         this.user = user;
         this.createdDate = LocalDateTime.now();
         this.token = UUID.randomUUID().toString();
-        this.expiryDate = this.createdDate.plusMinutes(15);
+        this.expiryDate = this.createdDate.plusMinutes(30);
         this.isValid = false;
     }
 }

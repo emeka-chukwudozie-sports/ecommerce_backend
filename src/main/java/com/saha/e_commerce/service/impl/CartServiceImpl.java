@@ -35,9 +35,10 @@ public class CartServiceImpl implements CartService {
            Cart userCart = cartRepository.findCartByUserAndProduct(user, product).get();
            userCart.setQuantity(cartDto.getQuantity() + userCart.getQuantity());
            cartRepository.save(userCart);
+       } else {
+           Cart cart = new Cart(product, cartDto.getQuantity(), user);
+           cartRepository.save(cart);
        }
-        Cart cart = new Cart(product,cartDto.getQuantity(),user);
-        cartRepository.save(cart);
 
     }
 
@@ -49,7 +50,11 @@ public class CartServiceImpl implements CartService {
             CartItemDto cartItemDto = new CartItemDto(cart);
             cartItems.add(cartItemDto);
         }
-        return null;
+        double totalCost = 0;
+        for(CartItemDto cartItemDto: cartItems){
+            totalCost += cartItemDto.getQuantity() * cartItemDto.getProduct().getPrice();
+        }
+        return new CartDto(cartItems, totalCost);
     }
 
     private boolean productAlreadyInCart(Product product, User user){
