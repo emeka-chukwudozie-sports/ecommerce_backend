@@ -19,4 +19,6 @@ public class MessageString {
     public static final String CATEGORY_UPDATED = "Category successfully updated";
     public static final String CATEGORY_EXISTS = "Category already created";
     public static final String CATEGORY_CREATED  = "Category successfully added";
+    public static final String INVALID_CART = "No cart with the Id exists";
+    public static final String CART_NOT_FOR_USER = "Cart item does not belong to this user";
 }

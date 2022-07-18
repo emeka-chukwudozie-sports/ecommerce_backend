@@ -3,6 +3,7 @@ package com.saha.e_commerce.service.impl;
 import com.saha.e_commerce.dto.cart.AddToCartDto;
 import com.saha.e_commerce.dto.cart.CartDto;
 import com.saha.e_commerce.dto.cart.CartItemDto;
+import com.saha.e_commerce.exception.CartItemException;
 import com.saha.e_commerce.exception.ProductException;
 import com.saha.e_commerce.model.Cart;
 import com.saha.e_commerce.model.Product;
@@ -10,10 +11,12 @@ import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.repositories.CartRepository;
 import com.saha.e_commerce.service.CartService;
 import com.saha.e_commerce.service.ProductService;
+import com.saha.e_commerce.utils.MessageString;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -55,6 +58,18 @@ public class CartServiceImpl implements CartService {
             totalCost += cartItemDto.getQuantity() * cartItemDto.getProduct().getPrice();
         }
         return new CartDto(cartItems, totalCost);
+    }
+
+    @Override
+    public void deleteCartItem(User user, int cartItemId) throws CartItemException {
+        Cart cart = cartRepository.findById(cartItemId).orElseThrow(() ->
+                new CartItemException(MessageString.INVALID_CART));
+        if(!Objects.equals(user, cart.getUser())){
+            throw new CartItemException(MessageString.CART_NOT_FOR_USER);
+        }
+        cartRepository.deleteById(cartItemId);
+
+
     }
 
     private boolean productAlreadyInCart(Product product, User user){

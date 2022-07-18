@@ -3,6 +3,7 @@ package com.saha.e_commerce.controllers;
 import com.saha.e_commerce.dto.cart.AddToCartDto;
 import com.saha.e_commerce.dto.cart.CartDto;
 import com.saha.e_commerce.exception.AuthenticationException;
+import com.saha.e_commerce.exception.CartItemException;
 import com.saha.e_commerce.exception.ProductException;
 import com.saha.e_commerce.model.User;
 import com.saha.e_commerce.payload.ApiResponse;
@@ -42,6 +43,15 @@ public class CartController {
         User user = authTokenService.getUserForToken(token);
        CartDto cartDto =  cartService.listCartItems(user);
        return new ResponseEntity<>(cartDto,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{cartItemId}")
+    public ResponseEntity<ApiResponse> removeCartItem(@PathVariable("cartItemId") int cartItemId,
+       @RequestParam("token") String token) throws AuthenticationException, CartItemException {
+        authTokenService.authenticate(token);
+        User user = authTokenService.getUserForToken(token);
+        cartService.deleteCartItem(user,cartItemId);
+        return new ResponseEntity<>(new ApiResponse(true,"Cart Item removed"), HttpStatus.OK);
 
     }
 }
