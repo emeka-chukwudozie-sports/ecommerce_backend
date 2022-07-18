@@ -23,4 +23,9 @@ public class ExceptionControllerAdvice {
     public final ResponseEntity<String> handleProductException(ProductException exception){
         return new ResponseEntity<>(exception.getMessage(),HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = CartItemException.class)
+    public final ResponseEntity<String> handleCartItemException(CartItemException exception){
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }
